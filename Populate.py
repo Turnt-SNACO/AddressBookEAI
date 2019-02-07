@@ -1,4 +1,8 @@
+# Author: James Anderson
+# EAI Coding Challenge: Address Book
+
 from faker import Faker
+import names
 from ElasticAB import ElasticAB
 import random
 
@@ -12,7 +16,8 @@ def fake_number():
     output = "{0}-{1}-{2}".format(a,b,c)
     return output
 
-for i in range(10000):
+for i in range(100):
     print(i)
-    eab.add_contact(fake.name(), fake.address(), fake_number())
+    fake_email = "{0}@{1}.com".format(names.get_first_name(), names.get_last_name())
+    eab.add_contact(fake.name(), fake.address(), fake_number(), fake_email)
 print('done')
