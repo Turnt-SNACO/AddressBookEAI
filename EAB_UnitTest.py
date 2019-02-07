@@ -6,6 +6,8 @@ eab = ElasticAB()
 
 
 class TestEabMethods(unittest.TestCase):
+    def setUp(self):
+        eab.delete_contact('Zulu Fakename')
     def test_casing(self):
         self.assertTrue(eab.add_contact('Zulu Fakename', '123 Fake Ln.', '123-456-7890'))
         self.assertFalse(eab.add_contact('zulu fakename', '123 Fake Ln.', '123-456-7890'))
@@ -27,6 +29,8 @@ class TestEabMethods(unittest.TestCase):
         self.assertEqual(eab.search_contact('Zulu Fakename').phone_number, '1-1-1')
         self.assertNotEqual(eab.search_contact('Zulu Fakename').phone_number, '123-456-7890')
         self.assertTrue(eab.delete_contact('Zulu Fakename'))
+    def tearDown(self):
+        eab.delete_contact('Zulu Fakename')
 if __name__ == '__main__':
     unittest.main()
     
