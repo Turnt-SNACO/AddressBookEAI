@@ -9,10 +9,10 @@ INDEX='contacts'
 
 class ElasticAB:
     #Will have default of localhost and port 9200 if unspecified
-    def __init__(self, address='localhost', port='9200'):
-        self.address = address
+    def __init__(self, host='localhost', port='9200'):
+        self.host = host
         self.port = port
-        self.es = Elasticsearch([{'host': address, 'port' : port}])
+        self.es = Elasticsearch([{'host': host, 'port' : port}])
 
     #Add a contact if it does not already exist otherwise
     #Returns boolean value which indicates success or failure
@@ -100,3 +100,4 @@ class ElasticAB:
         if isinstance(name, int) or isinstance(name, float):
             raise TypeError("Must be string!")
         return self.es.exists(index=INDEX, doc_type='_doc', id=name)
+
