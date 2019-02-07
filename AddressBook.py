@@ -22,7 +22,6 @@ def home_page():
 
 @app.route('/add', methods=['GET', 'POST'])
 def add_contact():
-    #display add form
     name = request.args.get("name")
     address = request.args.get("addr")
     phone_number = request.args.get("phnm")
@@ -34,6 +33,7 @@ def add_contact():
             return render_template('addc.html')
         else:
             return render_template('addf.html')
+    #display add form
     return render_template('add.html')
 
 @app.route('/update', methods=['GET', 'POST'])
@@ -53,6 +53,12 @@ def update_contact():
 
 @app.route('/list')
 def get_contact_list():
+    epp = request.args.get("epp")
+    p = request.args.get("p")
+    if epp is not None and p is not None:
+        eab = ElasticAB(session['host'], session['port'])
+        entries = eab.list_contacts(int(epp), int(p))
+        return list_parser(entries)
     #display list form
     return render_template('list.html')
 
@@ -79,5 +85,15 @@ def delete_contact():
         return render_template('deletec.html')
     #display delete form
     return render_template('delete.html')
+
+#transforms list of contacts into a pretty html list
+def list_parser(entries):
+    data = '<!DOCTYPE html><html><title>EAB for EAI</title><meta name="list" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"><body><header class="w3-container w3-teal"><h1>Elastic Address Book</h1></header>'
+    for i in entries:
+        data = data + '<div class="w3-container w3-half w3-margin-top"><div class="w3-container w3-card-4" method="GET">' + i.name +":<br> " + i.address +"<br> " + i.phone_number +"<br>" + '</div></div>'
+    data = data + '</body></html>'
+    return data
+
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
+
