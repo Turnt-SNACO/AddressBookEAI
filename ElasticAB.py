@@ -17,6 +17,15 @@ class ElasticAB:
     #Add a contact if it does not already exist otherwise
     #Returns boolean value which indicates success or failure
     def add_contact(self, name, address, phone_number):
+        if (not isinstance(name, str) or not isinstance(address, str) or not isinstance(phone_number, str)):
+            raise TypeError("Arguments must be strings")
+        if len(name) > 100:
+            raise Exception("Name field must be less than 100 characters")
+        if len(address) > 150:
+            raise Exception("Address field must be less than 150 characters")
+        #according to a quick google search, the longest existing phone numbers are 15 digits long
+        if len(phone_number) > 15:
+            raise Exception("Phone number must be less than 16 characters")
         name = name.lower()
         if not self.has(name):
             body = {"name":name,"address":address,"phnm":phone_number}
@@ -27,6 +36,10 @@ class ElasticAB:
     #Get contact information if it exists
     #Returns a contact object
     def search_contact(self, name):
+        if (not isinstance(name, str)):
+            raise TypeError("Argument must be string")
+        if len(name) > 100:
+            raise Exception("Name field must be less than 100 characters")
         name = name.lower()
         if self.has(name):
             data = self.es.get(index=INDEX, doc_type='_doc', id=name)['_source']
@@ -37,6 +50,15 @@ class ElasticAB:
     #Update existing contact
     #Returns boolean value which indicates success or failure
     def update_contact(self, name, address, phone_number):
+        if (not isinstance(name, str) or not isinstance(address, str) or not isinstance(phone_number, str)):
+            raise TypeError("Arguments must be strings")
+        if len(name) > 100:
+            raise Exception("Name field must be less than 100 characters")
+        if len(address) > 150:
+            raise Exception("Address field must be less than 150 characters")
+        #according to a quick google search, the longest existing phone numbers are 15 digits long
+        if len(phone_number) > 15:
+            raise Exception("Phone number must be less than 16 characters")
         name = name.lower()
         if self.has(name):
             body = {"script" : {"source" : "ctx._source.address = params.address; ctx._source.phnm = params.phnm","lang" : "painless","params": {"address" : address,"phnm" : phone_number}}}
@@ -47,6 +69,10 @@ class ElasticAB:
     #Delete an existing contact
     #Returns boolean value which indicates success or failure
     def delete_contact(self, name):
+        if (not isinstance(name, str)):
+            raise TypeError("Arguments must be strings")
+        if len(name) > 100:
+            raise Exception("Name field must be less than 100 characters")
         name = name.lower()
         if self.has(name):
             self.es.delete(index=INDEX, doc_type='_doc', id=name)
@@ -58,6 +84,8 @@ class ElasticAB:
     #   page - starts at 0
     #returns a list of contact objects with results of search
     def list_contacts(self, epp, page):
+        if (not isinstance(epp, int) or not isinstance(page, int)):
+            raise TypeError("Arguments must be integers")
         frm = epp*(page)
         body = {"query": {"match_all" : {}}}
         data = self.es.search(index=INDEX, doc_type='_doc', from_=frm, size=epp, body=body)
@@ -69,4 +97,6 @@ class ElasticAB:
 
     #Shorthand to make typing easier
     def has(self, name):
+        if isinstance(name, int) or isinstance(name, float):
+            raise TypeError("Must be string!")
         return self.es.exists(index=INDEX, doc_type='_doc', id=name)
