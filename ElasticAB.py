@@ -46,6 +46,7 @@ class ElasticAB:
     #Delete an existing contact
     #Returns boolean value which indicates success or failure
     def delete_contact(self, name):
+        name = name.lower()
         if self.has(name):
             self.es.delete(index=INDEX, doc_type='_doc', id=name)
             return True
