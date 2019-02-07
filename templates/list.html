@@ -1,25 +1,27 @@
 <!DOCTYPE html>
 <html>
-<title>W3.CSS</title>
-<meta name="addressbook" content="width=device-width, initial-scale=1">
+<title>EAB for EAI</title>
+<meta name="list" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
 <body>
 
-<header class="w3-container w3-teal">
-  <h1>Elastic Address Book</h1>
-</header>
-<div class="w3-container w3-half w3-margin-top">
+  <header class="w3-container w3-teal">
+    <h1>Elastic Address Book</h1>
+  </header>
+  <div class="w3-container w3-half w3-margin-top">
     <form class="w3-container w3-card-4" method='GET'>
-        <h2>Show Contact List</h2>
-        <p>
-        <input class="w3-input" type="text" id="epp" name="epp" value={{epp}} style="width:90%" required>
+      <h2>Show Contact List</h2>
+      <p>
+        <input class="w3-input" type="text" id="epp" name="epp" value="{{epp}}" style="width:90%" required>
         <label>Entries per Page</label></p>
       <p>
-      <input class="w3-input" type="text" id="p" name="p" value={{p}} style="width:90%" required>
+        <input class="w3-input" type="text" id="p" name="p" value="{{p}}" style="width:90%" required>
         <label>Page</label></p>
       <p>
         <button class="w3-button w3-section w3-teal w3-ripple"> Show List </button></p>
     </form>
   </div>
-  </body>
-  </html>
+</body>
+
+</html>
