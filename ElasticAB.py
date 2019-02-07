@@ -4,14 +4,8 @@
 # Supported fields are name, address, and phone number
 
 from elasticsearch import Elasticsearch
+from Contact import Contact
 INDEX='contacts'
-
-#A container for contact information
-class Contact:
-    def __init__(self, name, address, phone_number):
-        self.name = name
-        self.address = address
-        self.phone_number = phone_number
 
 class ElasticAB:
     #Will have default of localhost and port 9200 if unspecified
