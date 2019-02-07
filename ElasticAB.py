@@ -39,7 +39,7 @@ class ElasticAB:
     def update_contact(self, name, address, phone_number):
         name = name.lower()
         if self.has(name):
-            body = {"name":name,"address":address,"phnm":phone_number}
+            body = {"script" : {"source" : "ctx._source.address = params.address; ctx._source.phnm = params.phnm","lang" : "painless","params": {"address" : address,"phnm" : phone_number}}}
             self.es.update(index=INDEX, doc_type='_doc', id=name, body=body)
             return True
         return False
@@ -70,5 +70,3 @@ class ElasticAB:
     #Shorthand to make typing easier
     def has(self, name):
         return self.es.exists(index=INDEX, doc_type='_doc', id=name)
-
-
