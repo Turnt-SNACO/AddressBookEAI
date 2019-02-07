@@ -30,13 +30,14 @@ class ElasticAB:
         name = name.lower()
         if self.has(name):
             data = self.es.get(index=INDEX, doc_type='_doc', id=name)['_source']
-            contact = Contact(data['name'], data['address'], data['phnm'])
+            contact = Contact(data['name'].capitalize(), data['address'], data['phnm'])
             return contact
         return False
     
     #Update existing contact
     #Returns boolean value which indicates success or failure
     def update_contact(self, name, address, phone_number):
+        name = name.lower()
         if self.has(name):
             body = {"name":name,"address":address,"phnm":phone_number}
             self.es.update(index=INDEX, doc_type='_doc', id=name, body=body)
@@ -62,7 +63,7 @@ class ElasticAB:
         data = self.es.search(index=INDEX, doc_type='_doc', from_=frm, size=epp, body=body)
         entries = []
         for i in data['hits']['hits']:
-            entry = Contact(i['_source']['name'], i['_source']['address'], i['_source']['phnm'])
+            entry = Contact(i['_source']['name'].capitalize(), i['_source']['address'], i['_source']['phnm'])
             entries.append(entry)
         return entries
 
