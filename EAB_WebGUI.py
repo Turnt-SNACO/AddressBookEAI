@@ -124,7 +124,7 @@ def list_parser(entries):
     data = data + '<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"><body>'
     data = data + '<header class="w3-container w3-teal"><h1>Elastic Address Book</h1><a href="/""> Home </a>'
     data = data + '<a href="add""> Add </a><a href="update""> Update </a><a href="delete""> Delete </a>'
-    data = data + '<a href="search""> Search </a><a href="list""> List </a><a href="query""> Query </a></header>'
+    data = data + '<a href="search""> Search </a><a href="list""> List </a><a href="list_query""> Query </a></header>'
     for i in entries:
         data = data + '<div class="w3-container w3-half w3-margin-top"><div class="w3-container w3-card-4" method="GET">'
         data = data + i.name +":<br> " + i.address +"<br> " + i.email_address + "<br>" + i.phone_number +"<br>" + '</div></div>' 
