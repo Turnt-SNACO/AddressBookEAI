@@ -6,6 +6,7 @@
 from elasticsearch import Elasticsearch
 import elasticsearch
 from Contact import Contact
+from urllib.parse import unquote
 import sys
 INDEX='contacts'
 
@@ -107,13 +108,26 @@ class ElasticAB:
         if (page < 0):
             raise ValueError("Page cannot index below zero")
         frm = epp*(page)
-        body = {"query": {"match_all" : {}}}
+        body = '{"query": {"match_all" : {}}}'
         data = self.es.search(index=INDEX, doc_type='_doc', from_=frm, size=epp, body=body)
         entries = []
         for i in data['hits']['hits']:
             entry = Contact(i['_source']['name'].capitalize(), i['_source']['address'], i['_source']['phnm'], i['_source']['email'])
             entries.append(entry)
         return entries
+
+    # Lists all contacts that match the query body
+    # query should be in the form of an elasticsearch query
+    def list_by_query(self, body):
+        if body is not None and body is not '':
+            data = self.es.search(index=INDEX, doc_type='_doc', body=unquote(body))
+            entries = []
+            for i in data['hits']['hits']:
+                entry = Contact(i['_source']['name'].capitalize(), i['_source']['address'], i['_source']['phnm'], i['_source']['email'])
+                entries.append(entry)
+            return entries
+        else:
+            return 'NEEDs to provide query'
 
     #Shorthand to make typing easier
     def has(self, name):
