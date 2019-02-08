@@ -100,7 +100,7 @@ class ElasticAB:
     #   epp - entries per page
     #   page - starts at 0
     #returns a list of contact objects with results of search
-    def list_contacts(self, epp, page):
+    def list_contacts(self, epp, page, body='{"query": {"match_all" : {}}}'):
         if (not isinstance(epp, int) or not isinstance(page, int)):
             raise TypeError("Arguments must be integers")
         if (epp < 1):
@@ -108,7 +108,6 @@ class ElasticAB:
         if (page < 0):
             raise ValueError("Page cannot index below zero")
         frm = epp*(page)
-        body = '{"query": {"match_all" : {}}}'
         data = self.es.search(index=INDEX, doc_type='_doc', from_=frm, size=epp, body=body)
         entries = []
         for i in data['hits']['hits']:
@@ -128,6 +127,15 @@ class ElasticAB:
             return entries
         else:
             return 'NEEDs to provide query'
+
+    def search_by_query(self, pageSize, page, body='{"query": {"match_all" : {}}}'):
+        from_ = int(pageSize)*int(page)
+        data = self.es.search(index=INDEX, doc_type='_doc', from_=from_, size=pageSize, body=body)
+        entries = []
+        for i in data['hits']['hits']:
+            entry = Contact(i['_source']['name'].capitalize(), i['_source']['address'], i['_source']['phnm'], i['_source']['email'])
+            entries.append(entry)
+        return entries
 
     #Shorthand to make typing easier
     def has(self, name):
