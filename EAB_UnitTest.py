@@ -1,13 +1,20 @@
+# Author: James Anderson
+# EAI Coding Challenge: Address Book
+# For the test_list_contacts the assumption is that there is at least 200 contacts
+# the Populate.py script can easily generate 200 dummy contacts for this purpose
+
 import unittest
 
 from ElasticAB import ElasticAB
+from elasticsearch import NotFoundError
 from Contact import Contact
-eab = ElasticAB()
 
+eab = ElasticAB()
 
 class TestEabMethods(unittest.TestCase):
     def setUp(self):
-        eab.delete_contact('Zulu Fakename')
+        if (eab.has('zulu fakename')):
+            eab.delete_contact('Zulu Fakename')
     def test_casing(self):
         self.assertTrue(eab.add_contact('Zulu Fakename', '123 Fake Ln.', '123-456-7890'))
         self.assertFalse(eab.add_contact('zulu fakename', '123 Fake Ln.', '123-456-7890'))
@@ -20,7 +27,7 @@ class TestEabMethods(unittest.TestCase):
         self.assertFalse(eab.add_contact('Zulu Fakename', '123 Fake Ln.', '123-456-7890'))
         self.assertIsInstance(eab.search_contact('Zulu Fakename'), Contact)
         self.assertTrue(eab.delete_contact('Zulu Fakename'))
-        self.assertFalse(eab.delete_contact('Zulu Fakename'))
+        self.assertRaises(NotFoundError, eab.delete_contact, 'Zulu Fakename')
     def test_update(self):
         self.assertTrue(eab.add_contact('Zulu Fakename', '123 Fake Ln.', '123-456-7890'))
         self.assertTrue(eab.update_contact('Zulu Fakename', '123 Real Rd.', '1-1-1'))
@@ -29,12 +36,16 @@ class TestEabMethods(unittest.TestCase):
         self.assertEqual(eab.search_contact('Zulu Fakename').phone_number, '1-1-1')
         self.assertNotEqual(eab.search_contact('Zulu Fakename').phone_number, '123-456-7890')
         self.assertTrue(eab.delete_contact('Zulu Fakename'))
+        self.assertRaises(NotFoundError, eab.update_contact, 'zulu fakename')
     def test_list_contacts(self):
         self.assertEqual(len(eab.list_contacts(100, 0)), 100)
         self.assertNotEqual(eab.list_contacts(100,0), eab.list_contacts(100,1))
         self.assertEqual(list(set(eab.list_contacts(100,0)) & set(eab.list_contacts(100,1))), [])
         self.assertEqual(list(set(eab.list_contacts(100,0)) & set(eab.list_contacts(50,1))), [])
         self.assertNotEqual(eab.list_contacts(20,0)[2].name, None)
+        self.assertRaises(ValueError, eab.list_contacts, -1, 1)
+        self.assertRaises(ValueError, eab.list_contacts, 1, -1)
+        self.assertRaises(ValueError, eab.list_contacts, -1, -1)
     def test_bad_data_types(self):
         self.assertRaises(TypeError, eab.add_contact, 'string' , 2 , 3)
         self.assertRaises(TypeError, eab.add_contact, 1 , 'string' , 3)
@@ -67,8 +78,10 @@ class TestEabMethods(unittest.TestCase):
         self.assertRaises(Exception, eab.delete_contact, 
         'lzvicpghimacvfaizmkfkshiivuyjwlqfxnyxxpskpgyznrksjdnurwdtdkxazbisflefdxsahhiyxdviosulmrjwrbrxjntxtytf')
     def tearDown(self):
-        eab.delete_contact('Zulu Fakename')
-        eab.delete_contact('string')
+        if (eab.has('zulu fakename')):
+            eab.delete_contact('Zulu Fakename')
+        if (eab.has('string')):
+            eab.delete_contact('string')
 if __name__ == '__main__':
     unittest.main()
     
