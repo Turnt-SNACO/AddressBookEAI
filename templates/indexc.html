@@ -8,10 +8,18 @@
 
   <header class="w3-container w3-teal">
     <h1>Elastic Address Book</h1>
+    <a href="/"">Home</a>
+    <a href="add"">Add</a>
+    <a href="update"">Update</a>
+    <a href="delete"">Delete</a>
+    <a href="search"">Search</a>
+    <a href="list"">List</a>
+    <a href="query"">Query</a>
   </header>
 
   <div class="w3-container w3-half w3-margin-top">
     <form class="w3-container w3-card-4" method="get">
+      <h2>Set Host and Port</h2>
       <p>
         <input class="w3-input" type="text" name="host" id="host" value="{{host}}" placeholder="localhost" maxlength="100" style="width:90%" required>
         <label>Host</label></p>
@@ -19,20 +27,11 @@
         <input class="w3-input" type="text" name="port" id="port" value="{{port}}" placeholder="9200" maxlength="150" style="width:90%" required>
         <label>Port</label></p>
       <p>
-        <button class="w3-button w3-section w3-teal w3-ripple" type="submit">Set Host and Port</button></p>
-        Host and port updated!
+        <button class="w3-button w3-section w3-teal w3-ripple" type="submit">Set Host and Port</button></p> 
     </form>
+    Host and port updated!
   </div>
 
-  <div class="w3-container w3-half w3-margin-top">
-    <div class="w3-container w3-card-4" method="get">
-      <p><a href="http://127.0.0.1:5000/add" class="w3-button w3-section w3-teal w3-ripple"> Add Contact </a></p>
-      <p><a href="http://127.0.0.1:5000/update" class="w3-button w3-section w3-teal w3-ripple"> Update Contact </a></p>
-      <p><a href="http://127.0.0.1:5000/delete" class="w3-button w3-section w3-teal w3-ripple"> Delete Contact </a></p>
-      <p><a href="http://127.0.0.1:5000/list" class="w3-button w3-section w3-teal w3-ripple"> List Contacts </a></p>
-      <p><a href="http://127.0.0.1:5000/search" class="w3-button w3-section w3-teal w3-ripple"> Search Contacts </a></p>
-    </div>
-  </div>
 
 </body>
 

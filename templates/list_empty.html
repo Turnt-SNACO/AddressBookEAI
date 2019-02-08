@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <title>EAB for EAI</title>
-<meta name="delcontact" content="width=device-width, initial-scale=1">
+<meta name="list" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 
 <body>
@@ -18,14 +18,17 @@
   </header>
   <div class="w3-container w3-half w3-margin-top">
     <form class="w3-container w3-card-4" method='GET'>
-      <h2>Delete Contact</h2>
+      <h2>Show Contact List</h2>
       <p>
-        <input class="w3-input" type="text" id="name" name="name" value="{{name}}" style="width:90%" required>
-        <label>Name</label></p>
+        <input class="w3-input" type="text" id="epp" name="epp" value="{{epp}}" style="width:90%" required>
+        <label>Entries per Page</label></p>
       <p>
-        <button class="w3-button w3-section w3-teal w3-ripple"> Delete </button></p>
-      Contact Deleted!
+        <input class="w3-input" type="text" id="p" name="p" value="{{p}}" style="width:90%" required>
+        <label>Page</label></p>
+      <p>
+        <button class="w3-button w3-section w3-teal w3-ripple"> Show List </button></p>
     </form>
+    The list came up empty, you may have selected a page past the end of the contact list.
   </div>
 </body>
 
