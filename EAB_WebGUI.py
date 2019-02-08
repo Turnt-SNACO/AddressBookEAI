@@ -59,11 +59,25 @@ def update_contact():
     has_one_field = (address != "" or phone_number != "" or email_address != "")
     if (name is not None and has_one_field):
         eab = ElasticAB(session['host'], session['port'])
-        success = eab.update_contact(name, address, phone_number)
-        if success:
+        try:
+            eab.update_contact(name, address, phone_number)
             return render_template('updatec.html')
+        except elasticsearch.NotFoundError:
+            return render_template('notfound.html')   
     else:
         return render_template('updatemore.html', name=name)
+
+@app.route('/query')
+def get_query_results():
+    query = request.args.get("query")
+    if query is not None:
+        eab = ElasticAB(session['host'], session['port'])
+        entries = eab.list_by_query(query)
+        if (entries == []):
+            return render_template('list_query_empty.html')
+        return list_parser(entries)
+    #display form
+    return render_template('list_query.html')
 
 @app.route('/list')
 def get_contact_list():
@@ -72,6 +86,8 @@ def get_contact_list():
     if epp is not None and p is not None:
         eab = ElasticAB(session['host'], session['port'])
         entries = eab.list_contacts(int(epp), int(p))
+        if (entries == []):
+            return render_template('list_empty.html')
         return list_parser(entries)
     #display list form
     return render_template('list.html')
@@ -94,23 +110,28 @@ def delete_contact():
     name = request.args.get("name")
     if name is not None:
         eab = ElasticAB(session['host'], session['port'])
-        result = eab.delete_contact(name)
-        if result is True:
+        try:
+            eab.delete_contact(name)
             return render_template('deletec.html')
-        else:
-            return result
-        
+        except elasticsearch.NotFoundError:
+            return render_template('notfound.html')       
     #display delete form
     return render_template('delete.html')
 
 #transforms list of contacts into a pretty html list
 def list_parser(entries):
-    data = '<!DOCTYPE html><html><title>EAB for EAI</title><meta name="list" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"><body><header class="w3-container w3-teal"><h1>Elastic Address Book</h1></header>'
+    data = '<!DOCTYPE html><html><title>EAB for EAI</title><meta name="list" content="width=device-width, initial-scale=1">'
+    data = data + '<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"><body>'
+    data = data + '<header class="w3-container w3-teal"><h1>Elastic Address Book</h1><a href="/""> Home </a>'
+    data = data + '<a href="add""> Add </a><a href="update""> Update </a><a href="delete""> Delete </a>'
+    data = data + '<a href="search""> Search </a><a href="list""> List </a><a href="query""> Query </a></header>'
     for i in entries:
-        data = data + '<div class="w3-container w3-half w3-margin-top"><div class="w3-container w3-card-4" method="GET">' + i.name +":<br> " + i.address +"<br> " + i.email_address + "<br>" + i.phone_number +"<br>" + '</div></div>'
+        data = data + '<div class="w3-container w3-half w3-margin-top"><div class="w3-container w3-card-4" method="GET">'
+        data = data + i.name +":<br> " + i.address +"<br> " + i.email_address + "<br>" + i.phone_number +"<br>" + '</div></div>' 
     data = data + '</body></html>'
     return data
 
 if __name__ == '__main__':
     app.run(debug=True)
 
+  
