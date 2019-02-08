@@ -63,7 +63,7 @@ def get_contact(name):
     try:
         result = eab.search_contact(name)
     except NotFoundError:
-        return 'Contact by that name could not be found.\n'
+        return 'Contact by that name could not be found [404].\n'
     return beautify(result.name, result.address, result.email_address, result.phone_number)
 
 # upadtes the contents of a specified contact
@@ -78,7 +78,7 @@ def update_contact(name):
             return 'Missing data. Make sure to include name, address, phone number, and email even if they are empty strings.\n'
         return 'Contact updated successfully.\n'
     except NotFoundError:
-        return 'Contact not found.  Try creating a contact instead.\n'
+        return 'Contact not found [404].  Try creating a contact instead.\n'
 
 # deletes the contact specified by name
 @app.route('/contact<name>', methods=['DELETE'])
@@ -88,7 +88,7 @@ def delete_contact(name):
         eab.delete_contact(name)
         return 'Contact deleted successfully.\n'
     except NotFoundError:
-        return 'Contact not found, cannot delete.\n'
+        return 'Cannot delete, contact not found [404].\n'
 
 # used to format a contact nicely
 def beautify(name, address, email_address, phone_number):
