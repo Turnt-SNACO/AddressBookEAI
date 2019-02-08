@@ -3,6 +3,7 @@
 
 from flask import Flask, render_template, request, session
 from elasticsearch import Elasticsearch
+import elasticsearch
 from ElasticAB import ElasticAB
 
 app = Flask(__name__)
@@ -25,31 +26,44 @@ def add_contact():
     name = request.args.get("name")
     address = request.args.get("addr")
     phone_number = request.args.get("phnm")
-    if (name is not None and address is not None and phone_number is not None):
+    email_address = request.args.get("email")
+    #this will trigger if none of the form has been filled previously
+    if (name is None and address is None and phone_number is None and email_address is None):
+        return render_template('add.html')
+    #check for one non-name field
+    has_one_field = (address != "" or phone_number != "" or email_address != "")
+    if (name is not None and has_one_field):
+        #initialize an EAB with specified host and port, this will cause an error if not specified per session.
         eab = ElasticAB(session['host'], session['port'])
-        print(session['host'], session['port'])
-        success = eab.add_contact(name, address, phone_number)
+        success = eab.add_contact(name, address, phone_number, email_address)
         if success:
             return render_template('addc.html')
         else:
+            #this shouldn't get hit ever but is there just in case
             return render_template('addf.html')
-    #display add form
-    return render_template('add.html')
+    else:
+        # loads this page if only name field is filled 
+        # to prompt for at least one more data field
+        return render_template('addmore.html', name=name)
+    
 
 @app.route('/update', methods=['GET', 'POST'])
 def update_contact():
     name = request.args.get("name")
     address = request.args.get("addr")
     phone_number = request.args.get("phnm")
-    if (name is not None and address is not None and phone_number is not None):
+    email_address = request.args.get("email")
+    if (name is None and address is None and phone_number is None and email_address is None):
+        #first load
+        return render_template('update.html')
+    has_one_field = (address != "" or phone_number != "" or email_address != "")
+    if (name is not None and has_one_field):
         eab = ElasticAB(session['host'], session['port'])
         success = eab.update_contact(name, address, phone_number)
         if success:
             return render_template('updatec.html')
-        else:
-            return render_template('updatef.html')
-    #display update form~
-    return render_template('update.html')
+    else:
+        return render_template('updatemore.html', name=name)
 
 @app.route('/list')
 def get_contact_list():
@@ -67,10 +81,11 @@ def get_contact():
     name = request.args.get("name")
     if name is not None:
         eab = ElasticAB(session['host'], session['port'])
-        result = eab.search_contact(name)
-        if result is False:
-            return "NO"
-        return render_template('search_res.html', name_r=result.name, addr_r=result.address, phnm_r=result.phone_number)
+        try:
+            result = eab.search_contact(name)
+            return render_template('search_res.html', name_r=result.name, addr_r=result.address, phnm_r=result.phone_number, email_r=result.email_address)
+        except elasticsearch.NotFoundError:
+            return render_template('notfound.html')
     #display search form
     return render_template('search.html')
 
@@ -80,9 +95,11 @@ def delete_contact():
     if name is not None:
         eab = ElasticAB(session['host'], session['port'])
         result = eab.delete_contact(name)
-        if result is False:
-            return "Error occured"
-        return render_template('deletec.html')
+        if result is True:
+            return render_template('deletec.html')
+        else:
+            return result
+        
     #display delete form
     return render_template('delete.html')
 
@@ -90,7 +107,7 @@ def delete_contact():
 def list_parser(entries):
     data = '<!DOCTYPE html><html><title>EAB for EAI</title><meta name="list" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"><body><header class="w3-container w3-teal"><h1>Elastic Address Book</h1></header>'
     for i in entries:
-        data = data + '<div class="w3-container w3-half w3-margin-top"><div class="w3-container w3-card-4" method="GET">' + i.name +":<br> " + i.address +"<br> " + i.phone_number +"<br>" + '</div></div>'
+        data = data + '<div class="w3-container w3-half w3-margin-top"><div class="w3-container w3-card-4" method="GET">' + i.name +":<br> " + i.address +"<br> " + i.email_address + "<br>" + i.phone_number +"<br>" + '</div></div>'
     data = data + '</body></html>'
     return data
 
