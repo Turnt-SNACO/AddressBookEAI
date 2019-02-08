@@ -30,8 +30,8 @@ class ElasticAB:
             raise Exception("Name field must be less than 100 characters")
         if len(address) > 150:
             raise Exception("Address field must be less than 150 characters")
-        if len(email_address) > 100:
-            raise Exception("Email address must be less than 100 characters")
+        if len(email_address) > 40:
+            raise Exception("Email address must be less than 40 characters")
         #according to a quick google search, the longest existing phone numbers are 15 digits long
         if len(phone_number) > 15:
             raise Exception("Phone number must be less than 16 characters")
@@ -65,8 +65,8 @@ class ElasticAB:
             raise Exception("Name field must be less than 100 characters")
         if len(address) > 150:
             raise Exception("Address field must be less than 150 characters")
-        if len(email_address) > 100:
-            raise Exception("Email address must be less than 100 characters")
+        if len(email_address) > 40:
+            raise Exception("Email address must be less than 40 characters")
         #according to a quick google search, the longest existing phone numbers are 15 digits long
         if len(phone_number) > 15:
             raise Exception("Phone number must be less than 16 characters")
