@@ -16,8 +16,8 @@ def fake_number():
     output = "{0}-{1}-{2}".format(a,b,c)
     return output
 
-for i in range(100):
-    print(i)
+print('Generating 200 dummy contacts...')
+for i in range(200):
     fake_email = "{0}@{1}.com".format(names.get_first_name(), names.get_last_name())
     eab.add_contact(fake.name(), fake.address(), fake_number(), fake_email)
 print('done')
