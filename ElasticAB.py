@@ -102,6 +102,10 @@ class ElasticAB:
     def list_contacts(self, epp, page):
         if (not isinstance(epp, int) or not isinstance(page, int)):
             raise TypeError("Arguments must be integers")
+        if (epp < 1):
+            raise ValueError("Must have at least one item per page")
+        if (page < 0):
+            raise ValueError("Page cannot index below zero")
         frm = epp*(page)
         body = {"query": {"match_all" : {}}}
         data = self.es.search(index=INDEX, doc_type='_doc', from_=frm, size=epp, body=body)
