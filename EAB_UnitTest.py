@@ -45,7 +45,7 @@ class TestEabMethods(unittest.TestCase):
         self.assertNotEqual(eab.list_contacts(20,0)[2].name, None)
         self.assertRaises(ValueError, eab.list_contacts, -1, 1)
         self.assertRaises(ValueError, eab.list_contacts, 1, -1)
-        self.assertRaises(ValueError, eab.list_contacts, -1, -1)
+        self.assertRaises(ValueError, eab.list_contacts, -1, -1)       
     def test_bad_data_types(self):
         self.assertRaises(TypeError, eab.add_contact, 'string' , 2 , 3)
         self.assertRaises(TypeError, eab.add_contact, 1 , 'string' , 3)
