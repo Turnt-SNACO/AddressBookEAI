@@ -39,6 +39,7 @@ def search_contacts():
             return output
     except Exception:
         return "An unexpected error occured\n"
+    
 
 # creates a new contact with the given information
 # requires name, address, phone number and email
@@ -51,6 +52,14 @@ def create_contact():
     if eab.has(data['name'].lower()):
         return 'Contact already exists, try updating instead.\n'
     try:
+        if (len(data['name'] > 100)):
+            return 'Name cannot be over 100 characters long.\n'
+        if (len(data['address'] > 150)):
+            return 'Address cannot be over 150 characters long.\n'
+        if (len(data['phnm']) > 15):
+            return 'Phone number cannot be over 15 characters long.\n'
+        if (len(data['email']) > 40):
+            return 'Email cannot be over 40 characters long.\n'
         eab.add_contact(data['name'], data['address'], data['phnm'], data['email'])
     except KeyError:
         return 'Missing data. Make sure to include name, address, phone number, and email even if they are empty strings.\n'
@@ -59,11 +68,15 @@ def create_contact():
 # finds the contact by the given name
 @app.route('/contact/<name>', methods=['GET'])
 def get_contact(name):
+    if len(name) > 100:
+        return 'Name cannot be over 100 characters long.\n'
     eab = ElasticAB(host=host, port=port)
     try:
         result = eab.search_contact(name)
     except NotFoundError:
         return 'Contact by that name could not be found [404].\n'
+    except ValueError as e:
+        return str(e)
     return beautify(result.name, result.address, result.email_address, result.phone_number)
 
 # upadtes the contents of a specified contact
@@ -73,9 +86,19 @@ def update_contact(name):
     try:
         eab = ElasticAB(host=host, port=port)
         try:
+            if (len(data['name'] > 100)):
+                return 'Name cannot be over 100 characters long.\n'
+            if (len(data['address'] > 150)):
+                return 'Address cannot be over 150 characters long.\n'
+            if (len(data['phnm']) > 15):
+                return 'Phone number cannot be over 15 characters long.\n'
+            if (len(data['email']) > 40):
+                return 'Email cannot be over 40 characters long.\n'
             eab.update_contact(data['name'], data['address'], data['phnm'], data['email'])
         except KeyError:
             return 'Missing data. Make sure to include name, address, phone number, and email even if they are empty strings.\n'
+        except Exception as e:
+            return str(e)
         return 'Contact updated successfully.\n'
     except NotFoundError:
         return 'Contact not found [404].  Try creating a contact instead.\n'
@@ -84,6 +107,8 @@ def update_contact(name):
 @app.route('/contact<name>', methods=['DELETE'])
 def delete_contact(name):
     try:
+        if (len(data['name'] > 100)):
+            return 'Name cannot be over 100 characters long.\n'
         eab = ElasticAB(host=host, port=port)
         eab.delete_contact(name)
         return 'Contact deleted successfully.\n'

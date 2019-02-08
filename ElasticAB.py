@@ -129,6 +129,10 @@ class ElasticAB:
             return 'NEEDs to provide query'
 
     def search_by_query(self, pageSize, page, body='{"query": {"match_all" : {}}}'):
+        if (pageSize < 1):
+            raise ValueError("Must have at least one item per page")
+        if (page < 0):
+            raise ValueError("Page cannot index below zero")
         from_ = int(pageSize)*int(page)
         data = self.es.search(index=INDEX, doc_type='_doc', from_=from_, size=pageSize, body=body)
         entries = []
