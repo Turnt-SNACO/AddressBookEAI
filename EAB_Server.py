@@ -107,7 +107,7 @@ def update_contact(name):
 @app.route('/contact<name>', methods=['DELETE'])
 def delete_contact(name):
     try:
-        if (len(data['name'] > 100)):
+        if (len(name > 100)):
             return 'Name cannot be over 100 characters long.\n'
         eab = ElasticAB(host=host, port=port)
         eab.delete_contact(name)
